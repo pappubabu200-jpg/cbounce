@@ -2,12 +2,8 @@
   "name": "cbounce",
   "private": true,
   "scripts": {
-    "dev": "turbo dev",
-    "build": "turbo build",
-    "lint": "turbo lint"
-  },
-  "devDependencies": {
-    "turbo": "^2.0.0"
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm --filter web build"
   },
   "packageManager": "pnpm@9.0.0"
 }
