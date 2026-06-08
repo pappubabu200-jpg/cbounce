@@ -1,3 +1,4 @@
+find apps/api -type f | sortfind apps/api -name "*verification*"
 from sqlalchemy import Column, String, Integer, Boolean, DateTime, Enum, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
