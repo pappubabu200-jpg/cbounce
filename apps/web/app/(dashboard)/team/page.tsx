@@ -1,1 +1,3 @@
-export default function TeamPage() { return <div>team</div> }
+export default function Page() {
+  return <div>team</div>
+}

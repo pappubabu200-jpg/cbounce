@@ -1,1 +1,3 @@
-export default function WebhooksPage() { return <div>webhooks</div> }
+export default function Page() {
+  return <div>webhooks</div>
+}

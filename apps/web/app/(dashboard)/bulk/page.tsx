@@ -1,1 +1,3 @@
-export default function BulkPage() { return <div>bulk</div> }
+export default function Page() {
+  return <div>bulk</div>
+}

@@ -1,1 +1,3 @@
-export default function HistoryPage() { return <div>history</div> }
+export default function Page() {
+  return <div>history</div>
+}

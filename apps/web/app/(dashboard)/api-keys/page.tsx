@@ -1,1 +1,7 @@
-export default function Api-keysPage() { return <div>api-keys</div> }
+export default function ApiKeysPage() {
+  return (
+    <div>
+      <h1>API Keys</h1>
+    </div>
+  )
+}

@@ -1,1 +1,3 @@
-export default function BillingPage() { return <div>billing</div> }
+export default function Page() {
+  return <div>billing</div>
+}

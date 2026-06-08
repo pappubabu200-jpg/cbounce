@@ -1,1 +1,3 @@
-export default function SettingsPage() { return <div>settings</div> }
+export default function Page() {
+  return <div>settings</div>
+}

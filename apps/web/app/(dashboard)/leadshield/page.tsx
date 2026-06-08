@@ -1,1 +1,3 @@
-export default function LeadshieldPage() { return <div>leadshield</div> }
+export default function Page() {
+  return <div>leadshield</div>
+}
