@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import history
+from routers import history, leadshield
 
 app = FastAPI(title="cbounce.io API", version="2.1.0")
 
@@ -13,6 +13,7 @@ app.add_middleware(
 )
 
 app.include_router(history.router, prefix="/v1/history", tags=["History"])
+app.include_router(leadshield.router, prefix="/v1/leadshield", tags=["LeadShield"])
 
 @app.get("/health")
 async def health():
@@ -22,16 +23,14 @@ async def health():
 async def verify_free(req: dict):
     from core.engine import check_email
     result = await check_email(req["email"], check_smtp=False)
-
-    # Auto save to history
     try:
         from routers.history import save_history, load_history
         h = load_history()
-        h.append({**result, "verified_at": __import__("datetime").datetime.utcnow().isoformat()})
+        import datetime
+        h.append({**result, "verified_at": datetime.datetime.utcnow().isoformat()})
         save_history(h)
     except:
         pass
-
     return {"success": True, "data": result}
 
 @app.post("/v1/verify/single")
