@@ -67,7 +67,7 @@ export default function HistoryPage() {
       if (data.success) {
         setItems(data.data.items || [])
         setMeta(data.data.meta || { total: 0, pages: 1 })
-        setStats(data.stats || { total: data.data?.meta?.total || 0, valid: 0, invalid: 0, risky: 0 })
+        setStats(data.stats ?? { total: data.data?.meta?.total || 0, valid: 0, invalid: 0, risky: 0 })
       }
     } catch (e) {
       console.error('Failed to fetch history:', e)
@@ -167,7 +167,7 @@ export default function HistoryPage() {
         ) : items.length === 0? (
           <div style={{ padding: '48px 24px', textAlign: 'center' }}>
             <div style={{ fontSize: 40, marginBottom: 12 }}>📭</div>
-            <div style={{ fontSize: 15, fontWeight: 600, color: '#374151', marginBottom: 4 }}>No history yet</div>
+            <div style={{ fontSize: 15, fontWeight: 600, color: '#374151', marginBottom: 4 }}>No verification history yet</div>
             <div style={{ fontSize: 13, color: '#94A3B8' }}>Start verifying emails to see history here</div>
             <a href="/verify" style={{ display: 'inline-block', marginTop: 16, padding: '10px 24px', background: '#2563EB', color: '#fff', borderRadius: 8, textDecoration: 'none', fontSize: 13, fontWeight: 600 }}>
               Verify First Email →
