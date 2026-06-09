@@ -62,7 +62,7 @@ export default function HistoryPage() {
         ...(filter !== 'all' ? { status: filter } : {}),
         ...(search ? { search } : {}),
       })
-      const res = await fetch(`\( {apiUrl}/v1/history/? \){params}`)
+      const res = await fetch(`${apiUrl}/v1/history/?${params}`)
       const data = await res.json()
       if (data.success) {
         setItems(data.data.items || [])
@@ -99,9 +99,10 @@ export default function HistoryPage() {
     }
     const header = 'email,status,score,mx_valid,is_disposable,is_role_account,verified_at,deliverability,reason'
     const rows = items.map(r =>
-      `"\( {r.email}"," \){r.status}",\( {r.score}, \){r.mx_valid},\( {r.is_disposable}, \){r.is_role_account},"\( {r.verified_at}"," \){r.deliverability || ''}","${r.reason || ''}"`
+      `"${r.email}","${r.status}","${r.score}","${r.mx_valid}","${r.is_disposable}","${r.is_role_account}","${r.verified_at}","${r.deliverability || ''}","${r.reason || ''}"`
     )
-    const blob = new Blob([[header, ...rows].join('\n')], { type: 'text/csv;charset=utf-8;' })
+    const blob = new Blob([[header, ...rows].join('
+')], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
@@ -186,7 +187,7 @@ export default function HistoryPage() {
               {items.map((item, i) => {
                 const sc = statusConfig[item.status] || statusConfig.unknown
                 return (
-                  <div key={`\( {item.email}- \){i}`} style={{ display: 'grid', gridTemplateColumns: '1fr 110px 70px 140px 80px', padding: '12px 16px', borderBottom: '1px solid #F8FAFC', alignItems: 'center' }}
+                  <div key={`${item.email}-${i}`} style={{ display: 'grid', gridTemplateColumns: '1fr 110px 70px 140px 80px', padding: '12px 16px', borderBottom: '1px solid #F8FAFC', alignItems: 'center' }}
                     onMouseEnter={e => (e.currentTarget.style.background = '#F8FAFC')}
                     onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
 
@@ -242,4 +243,4 @@ export default function HistoryPage() {
       )}
     </div>
   )
-    }
+  }
