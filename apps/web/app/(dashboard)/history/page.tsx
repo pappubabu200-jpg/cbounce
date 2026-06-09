@@ -67,7 +67,7 @@ export default function HistoryPage() {
       if (data.success) {
         setItems(data.data.items || [])
         setMeta(data.data.meta || { total: 0, pages: 1 })
-        setStats(data.stats || { total: data.meta.total, valid: 0, invalid: 0, risky: 0 })
+        setStats(data.stats || { total: data.data?.meta?.total || 0, valid: 0, invalid: 0, risky: 0 })
       }
     } catch (e) {
       console.error('Failed to fetch history:', e)
