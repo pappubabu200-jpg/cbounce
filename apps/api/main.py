@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="cbounce.io API", version="1.0.0")
+app = FastAPI(title="cbounce.io API", version="2.1.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -13,20 +13,16 @@ app.add_middleware(
 
 @app.get("/health")
 async def health():
-    return {"status": "ok", "service": "cbounce-api"}
+    return {"status": "ok", "service": "cbounce-api", "version": "2.1.0"}
 
 @app.post("/v1/verify/single/free")
 async def verify_free(req: dict):
-    email = req.get("email", "")
+    from core.engine import check_email
+    result = await check_email(req["email"], check_smtp=False)
+    return {"success": True, "data": result}
 
-    return {
-        "success": True,
-        "data": {
-            "email": email,
-            "status": "valid",
-            "score": 95,
-            "mx_valid": True,
-            "is_disposable": False,
-            "is_role_account": False
-        }
-    }
+@app.post("/v1/verify/single")
+async def verify_single(req: dict):
+    from core.engine import check_email
+    result = await check_email(req["email"], check_smtp=True)
+    return {"success": True, "data": result}
