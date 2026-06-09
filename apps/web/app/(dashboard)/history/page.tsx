@@ -59,14 +59,21 @@ export default function HistoryPage() {
       const params = new URLSearchParams({
         page: String(page),
         limit: '20',
-        ...(filter !== 'all' ? { status: filter } : {}),
-        ...(search ? { search } : {}),
+       ...(filter!== 'all'? { status: filter } : {}),
+       ...(search? { search } : {}),
       })
       const res = await fetch(`${apiUrl}/v1/history/?${params}`)
       const data = await res.json()
       if (data.success) {
-        const historyItems = data.data || []; setItems(historyItems); setMeta({ total: historyItems.length, pages: 1 })
-        setStats({ total: historyItems.length, valid: historyItems.filter(x => x.status === 'valid').length, invalid: historyItems.filter(x => x.status === 'invalid').length, risky: historyItems.filter(x => x.status === 'risky').length })
+        const historyItems = data.data || []
+        setItems(historyItems)
+        setMeta({ total: historyItems.length, pages: 1 })
+        setStats({
+          total: historyItems.length,
+          valid: historyItems.filter((x:any) => x.status === 'valid').length,
+          invalid: historyItems.filter((x:any) => x.status === 'invalid').length,
+          risky: historyItems.filter((x:any) => x.status === 'risky').length
+        })
       }
     } catch (e) {
       console.error('Failed to fetch history:', e)
@@ -100,7 +107,7 @@ export default function HistoryPage() {
     const rows = items.map(r =>
       `"${r.email}","${r.status}","${r.score}","${r.mx_valid}","${r.is_disposable}","${r.is_role_account}","${r.verified_at}","${r.deliverability || ''}","${r.reason || ''}"`
     )
-    const blob = new Blob([[header, ...rows].join('\n')], { type: 'text/csv;charset=utf-8;' })
+    const blob = new Blob([[header,...rows].join('\n')], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
@@ -118,11 +125,11 @@ export default function HistoryPage() {
           <p style={{ color: '#64748B', fontSize: 14, margin: 0 }}>All your past email verifications</p>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
-          <button onClick={downloadCSV} disabled={items.length === 0} style={{ padding: '8px 14px', background: '#F1F5F9', border: '1px solid #E2E8F0', borderRadius: 8, fontSize: 12, fontWeight: 600, color: items.length === 0 ? '#94A3B8' : '#374151', cursor: items.length === 0 ? 'not-allowed' : 'pointer' }}>
+          <button onClick={downloadCSV} disabled={items.length === 0} style={{ padding: '8px 14px', background: '#F1F5F9', border: '1px solid #E2E8F0', borderRadius: 8, fontSize: 12, fontWeight: 600, color: items.length === 0? '#94A3B8' : '#374151', cursor: items.length === 0? 'not-allowed' : 'pointer' }}>
             ⬇️ Export
           </button>
-          <button onClick={handleClear} disabled={clearing || meta.total === 0} style={{ padding: '8px 14px', background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 8, fontSize: 12, fontWeight: 600, color: clearing || meta.total === 0 ? '#FCA5A5' : '#DC2626', cursor: clearing || meta.total === 0 ? 'not-allowed' : 'pointer' }}>
-            {clearing ? '⏳ Clearing...' : '🗑️ Clear'}
+          <button onClick={handleClear} disabled={clearing || meta.total === 0} style={{ padding: '8px 14px', background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 8, fontSize: 12, fontWeight: 600, color: clearing || meta.total === 0? '#FCA5A5' : '#DC2626', cursor: clearing || meta.total === 0? 'not-allowed' : 'pointer' }}>
+            {clearing? '⏳ Clearing...' : '🗑️ Clear'}
           </button>
         </div>
       </div>
@@ -153,7 +160,7 @@ export default function HistoryPage() {
           <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
             {['all', 'valid', 'invalid', 'risky', 'disposable', 'role'].map(f => (
               <button key={f} onClick={() => { setFilter(f); setPage(1) }}
-                style={{ padding: '6px 12px', background: filter === f ? '#2563EB' : '#F1F5F9', color: filter === f ? '#fff' : '#64748B', border: 'none', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer', textTransform: 'capitalize' }}>
+                style={{ padding: '6px 12px', background: filter === f? '#2563EB' : '#F1F5F9', color: filter === f? '#fff' : '#64748B', border: 'none', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer', textTransform: 'capitalize' }}>
                 {f}
               </button>
             ))}
@@ -161,9 +168,9 @@ export default function HistoryPage() {
         </div>
 
         {/* Table */}
-        {loading ? (
+        {loading? (
           <div style={{ padding: '40px', textAlign: 'center', color: '#94A3B8', fontSize: 14 }}>⏳ Loading...</div>
-        ) : items.length === 0 ? (
+        ) : items.length === 0? (
           <div style={{ padding: '48px 24px', textAlign: 'center' }}>
             <div style={{ fontSize: 40, marginBottom: 12 }}>📭</div>
             <div style={{ fontSize: 15, fontWeight: 600, color: '#374151', marginBottom: 4 }}>No verification history yet</div>
@@ -202,7 +209,7 @@ export default function HistoryPage() {
                       </span>
                     </div>
 
-                    <div style={{ fontSize: 13, fontWeight: 700, color: item.score >= 80 ? '#10B981' : item.score >= 50 ? '#F59E0B' : '#EF4444' }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: item.score >= 80? '#10B981' : item.score >= 50? '#F59E0B' : '#EF4444' }}>
                       {item.score}
                     </div>
 
@@ -227,18 +234,18 @@ export default function HistoryPage() {
       {meta.pages > 1 && (
         <div style={{ display: 'flex', justifyContent: 'center', gap: 8, alignItems: 'center' }}>
           <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-            style={{ padding: '8px 16px', background: page === 1 ? '#F1F5F9' : '#2563EB', color: page === 1 ? '#94A3B8' : '#fff', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: page === 1 ? 'not-allowed' : 'pointer' }}>
+            style={{ padding: '8px 16px', background: page === 1? '#F1F5F9' : '#2563EB', color: page === 1? '#94A3B8' : '#fff', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: page === 1? 'not-allowed' : 'pointer' }}>
             ← Prev
           </button>
           <span style={{ padding: '8px 16px', fontSize: 13, color: '#64748B' }}>
             Page {page} of {meta.pages}
           </span>
           <button onClick={() => setPage(p => Math.min(meta.pages, p + 1))} disabled={page === meta.pages}
-            style={{ padding: '8px 16px', background: page === meta.pages ? '#F1F5F9' : '#2563EB', color: page === meta.pages ? '#94A3B8' : '#fff', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: page === meta.pages ? 'not-allowed' : 'pointer' }}>
+            style={{ padding: '8px 16px', background: page === meta.pages? '#F1F5F9' : '#2563EB', color: page === meta.pages? '#94A3B8' : '#fff', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: page === meta.pages? 'not-allowed' : 'pointer' }}>
             Next →
           </button>
         </div>
       )}
     </div>
   )
-  }
+      }
