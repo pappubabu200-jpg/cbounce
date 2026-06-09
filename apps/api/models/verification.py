@@ -1,6 +1,6 @@
 find apps/api -type f | sortfind apps/api -name "*verification*"
 
-find apps/api/core -type ffrom sqlalchemy import Column, String, Integer, Boolean, DateTime, Enum, ForeignKey
+find apps/api/core -type from sqlalchemy import Column, String, Integer, Boolean, DateTime, Enum, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 from .base import Base
