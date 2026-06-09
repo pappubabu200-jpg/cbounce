@@ -65,9 +65,8 @@ export default function HistoryPage() {
       const res = await fetch(`${apiUrl}/v1/history/?${params}`)
       const data = await res.json()
       if (data.success) {
-        setItems(data.data.items || [])
-        setMeta(data.data.meta || { total: 0, pages: 1 })
-        setStats(data.stats ?? { total: data.data?.meta?.total || 0, valid: 0, invalid: 0, risky: 0 })
+        const historyItems = data.data || []; setItems(historyItems); setMeta({ total: historyItems.length, pages: 1 })
+        setStats({ total: historyItems.length, valid: historyItems.filter(x => x.status === 'valid').length, invalid: historyItems.filter(x => x.status === 'invalid').length, risky: historyItems.filter(x => x.status === 'risky').length })
       }
     } catch (e) {
       console.error('Failed to fetch history:', e)
