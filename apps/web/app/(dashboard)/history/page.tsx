@@ -171,8 +171,8 @@ export default function HistoryPage() {
 
                   <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     <span style={{ fontSize: 13, color: '#374151', fontWeight: 500 }}>{item.email}</span>
-                    {item.typo_suggestion && (
-                      <span style={{ fontSize: 11, color: '#F59E0B', marginLeft: 6 }}>→ {item.typo_suggestion}</span>
+                    {item.details?.suggestion && (
+                      <span style={{ fontSize: 11, color: '#F59E0B', marginLeft: 6 }}>→ {item.details.suggestion}</span>
                     )}
                   </div>
 
