@@ -101,8 +101,7 @@ export default function HistoryPage() {
     const rows = items.map(r =>
       `"${r.email}","${r.status}","${r.score}","${r.mx_valid}","${r.is_disposable}","${r.is_role_account}","${r.verified_at}","${r.deliverability || ''}","${r.reason || ''}"`
     )
-    const blob = new Blob([[header, ...rows].join('
-')], { type: 'text/csv;charset=utf-8;' })
+    const blob = new Blob([[header, ...rows].join('\n')], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
