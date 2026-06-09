@@ -59,20 +59,22 @@ export default function HistoryPage() {
       const params = new URLSearchParams({
         page: String(page),
         limit: '20',
-       ...(filter!== 'all'? { status: filter } : {}),
-       ...(search? { search } : {}),
+      ...(filter!== 'all'? { status: filter } : {}),
+      ...(search? { search } : {}),
       })
       const res = await fetch(`${apiUrl}/v1/history/?${params}`)
       const data = await res.json()
       if (data.success) {
         const historyItems = data.data || []
         setItems(historyItems)
-        setMeta({ total: historyItems.length, pages: 1 })
-        setStats({
-          total: historyItems.length,
+        // Backend meta vadali, lekapote fallback
+        setMeta(data.meta || { total: historyItems.length, pages: Math.ceil(historyItems.length / 20) })
+        // Backend stats vasthe vadali, lekapote current page vi calculate chey
+        setStats(data.stats || {
+          total: data.meta?.total || historyItems.length,
           valid: historyItems.filter((x:any) => x.status === 'valid').length,
-          invalid: historyItems.filter((x:any) => x.status === 'invalid').length,
-          risky: historyItems.filter((x:any) => x.status === 'risky').length
+          invalid: historyItems.filter((x:any) => x.status === 'invalid' || x.status === 'disposable').length,
+          risky: historyItems.filter((x:any) => x.status === 'risky' || x.status === 'role').length
         })
       }
     } catch (e) {
@@ -248,4 +250,4 @@ export default function HistoryPage() {
       )}
     </div>
   )
-      }
+                     }
