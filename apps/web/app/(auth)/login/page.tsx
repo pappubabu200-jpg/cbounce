@@ -41,11 +41,39 @@ export default function LoginPage() {
             style={{ width: '100%', padding: '10px 14px', border: '1px solid #E2E8F0', borderRadius: '8px', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }} />
         </div>
         <div style={{ marginBottom: '24px' }}>
-          <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>Password</label>
-          <input type="password" value={password} onChange={e => setPassword(e.target.value)}
-            placeholder="••••••••" onKeyDown={e => e.key === 'Enter' && handleLogin()}
-            style={{ width: '100%', padding: '10px 14px', border: '1px solid #E2E8F0', borderRadius: '8px', fontSize: '14px', outline: 'none', boxSizing: 'border-box' }} />
-        </div>
+  <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>Password</label>
+
+  <input
+    type="password"
+    value={password}
+    onChange={e => setPassword(e.target.value)}
+    placeholder="••••••••"
+    onKeyDown={e => e.key === 'Enter' && handleLogin()}
+    style={{
+      width: '100%',
+      padding: '10px 14px',
+      border: '1px solid #E2E8F0',
+      borderRadius: '8px',
+      fontSize: '14px',
+      outline: 'none',
+      boxSizing: 'border-box'
+    }}
+  />
+
+  <div style={{ textAlign: 'right', marginTop: '8px' }}>
+    <a
+      href="/forgot-password"
+      style={{
+        color: '#2563EB',
+        fontSize: '13px',
+        fontWeight: '600',
+        textDecoration: 'none'
+      }}
+    >
+      Forgot Password?
+    </a>
+  </div>
+</div>
         <button onClick={handleLogin} disabled={loading}
           style={{ width: '100%', padding: '12px', background: loading ? '#93C5FD' : '#2563EB', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '14px', fontWeight: '600', cursor: loading ? 'not-allowed' : 'pointer' }}>
           {loading ? 'Signing in...' : 'Sign In →'}
