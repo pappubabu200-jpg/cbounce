@@ -1,3 +1,5 @@
+import './globals.css'
+
 export const metadata = {
   title: 'cbounce.io',
   description: 'Email Verification Platform',
