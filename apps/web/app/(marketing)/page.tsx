@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import Navbar from '@/components/shared/Navbar'
 
 interface Step {
   id: string
@@ -369,7 +368,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans antialiased text-slate-900">
-      <Navbar />
 
       <main>
 
