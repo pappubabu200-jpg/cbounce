@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { clsx } from 'clsx'
 import { NAVIGATION_CONFIG, NavItem, ServicesCategory, IntegrationsCategory } from '../../config/navigation'
 
-// Helper component to resolve SVG icons by name
+// ─── Icon Registry ──────────────────────────────────────────────────────────────
 function NavIcon({ name, className = 'w-5 h-5' }: { name: string; className?: string }) {
   switch (name) {
     case 'mail':
@@ -157,6 +157,12 @@ function NavIcon({ name, className = 'w-5 h-5' }: { name: string; className?: st
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       )
+    case 'compare':
+      return (
+        <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+        </svg>
+      )
     case 'status':
       return (
         <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -178,8 +184,25 @@ function NavIcon({ name, className = 'w-5 h-5' }: { name: string; className?: st
   }
 }
 
+// ─── Badge Component ────────────────────────────────────────────────────────────
+function NavBadge({ text }: { text: string }) {
+  const colors = text === 'New'
+    ? 'bg-violet-100 text-violet-700 border-violet-200/50'
+    : text === 'Popular'
+      ? 'bg-amber-50 text-amber-700 border-amber-200/50'
+      : 'bg-slate-100 text-slate-600 border-slate-200/50'
+  return (
+    <span className={clsx('text-[9px] font-extrabold px-1.5 py-0.5 rounded-full leading-none border', colors)}>
+      {text}
+    </span>
+  )
+}
+
+// ─── Navbar Component ───────────────────────────────────────────────────────────
+type ActiveTab = 'services' | 'solutions' | 'integrations' | 'api' | 'resources' | null
+
 export default function Navbar() {
-  const [activeTab, setActiveTab] = useState<'services' | 'solutions' | 'integrations' | 'resources' | null>(null)
+  const [activeTab, setActiveTab] = useState<ActiveTab>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [mobileSections, setMobileSections] = useState<Record<string, boolean>>({})
@@ -240,7 +263,7 @@ export default function Navbar() {
   }, [pathname])
 
   // Mouse actions with a delay threshold to prevent menu flicker on hover exit
-  const handleMouseEnter = useCallback((tab: 'services' | 'solutions' | 'integrations' | 'resources') => {
+  const handleMouseEnter = useCallback((tab: ActiveTab) => {
     if (mouseLeaveTimeout.current) {
       clearTimeout(mouseLeaveTimeout.current)
       mouseLeaveTimeout.current = null
@@ -251,7 +274,7 @@ export default function Navbar() {
   const handleMouseLeave = useCallback(() => {
     mouseLeaveTimeout.current = setTimeout(() => {
       setActiveTab(null)
-    }, 150) // 150ms hover exit delay
+    }, 150)
   }, [])
 
   const toggleMobileSection = useCallback((section: string) => {
@@ -287,6 +310,10 @@ export default function Navbar() {
     return NAVIGATION_CONFIG.integrations.some(cat => cat.items.some(item => isRouteActive(item.href)))
   }, [isRouteActive])
 
+  const isApiActive = useMemo(() => {
+    return NAVIGATION_CONFIG.apiDropdown.some(item => isRouteActive(item.href))
+  }, [isRouteActive])
+
   const isResourcesActive = useMemo(() => {
     return NAVIGATION_CONFIG.resources.some(item => isRouteActive(item.href))
   }, [isRouteActive])
@@ -309,6 +336,8 @@ export default function Navbar() {
           'sticky top-0 w-full transition-all duration-200 border-b border-slate-200/80 backdrop-blur-md',
           scrolled ? 'bg-white/95 shadow-md shadow-slate-900/5' : 'bg-white'
         )}
+        role="navigation"
+        aria-label="Main navigation"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="flex items-center justify-between h-16 gap-4">
@@ -328,9 +357,9 @@ export default function Navbar() {
             </Link>
 
             {/* Desktop Navigation Items */}
-            <div className="hidden lg:flex items-center gap-1.5 flex-1 justify-center">
+            <div className="hidden lg:flex items-center gap-1 flex-1 justify-center">
               
-              {/* Dropdown: Services */}
+              {/* ── Dropdown: Services ──────────────────────────────────────── */}
               <div
                 className="relative"
                 onMouseEnter={() => handleMouseEnter('services')}
@@ -338,20 +367,18 @@ export default function Navbar() {
               >
                 <button
                   className={clsx(
-                    'px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-colors focus:outline-none focus:bg-slate-100',
-                    activeTab === 'services' ? 'bg-slate-100 text-blue-600' : isServicesActive ? 'text-blue-600 font-bold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    'px-3.5 py-2 rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40',
+                    activeTab === 'services' ? 'bg-slate-100 text-blue-600' : isServicesActive ? 'text-blue-600' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50/80'
                   )}
                   aria-haspopup="true"
                   aria-expanded={activeTab === 'services'}
                   aria-controls="desktop-menu-services"
+                  onClick={() => setActiveTab(activeTab === 'services' ? null : 'services')}
                 >
                   Services
                   <svg
                     className={clsx('w-3.5 h-3.5 text-slate-400 transition-transform duration-200', activeTab === 'services' && 'rotate-180')}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
@@ -361,41 +388,45 @@ export default function Navbar() {
                   <div
                     id="desktop-menu-services"
                     role="menu"
-                    className="absolute left-1/2 -translate-x-[200px] top-full mt-2 w-[880px] bg-white border border-slate-200/80 rounded-2xl shadow-xl shadow-slate-900/10 p-6 grid grid-cols-4 gap-6 animate-in fade-in slide-in-from-top-1 duration-150"
+                    className="absolute left-1/2 -translate-x-[180px] top-full mt-2 w-[720px] bg-white border border-slate-200/80 rounded-2xl shadow-xl shadow-slate-900/10 p-5 grid grid-cols-3 gap-5 animate-in fade-in slide-in-from-top-1 duration-150"
                   >
                     {NAVIGATION_CONFIG.services.map((cat: ServicesCategory) => (
-                      <div key={cat.title} className="flex flex-col gap-4 border-r border-slate-100 last:border-0 pr-4 last:pr-0">
-                        <div className="flex items-start gap-2.5">
-                          <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0 border border-blue-100/50 shadow-sm">
-                            <NavIcon name={cat.iconName} className="w-4.5 h-4.5" />
+                      <div key={cat.title} className="flex flex-col gap-3 border-r border-slate-100/80 last:border-0 pr-4 last:pr-0">
+                        {/* Clickable category header */}
+                        <Link
+                          href={cat.href || '#'}
+                          className="group/header flex items-start gap-2.5 p-1 rounded-lg hover:bg-slate-50/60 transition-colors"
+                        >
+                          <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0 border border-blue-100/50 shadow-sm group-hover/header:bg-blue-100/60 transition-colors">
+                            <NavIcon name={cat.iconName} className="w-4 h-4" />
                           </div>
-                          <div>
-                            <h4 className="text-sm font-bold text-slate-900 leading-tight">{cat.title}</h4>
-                            <p className="text-[11px] text-slate-400 mt-1 leading-normal">{cat.description}</p>
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-1.5">
+                              <h4 className="text-[13px] font-bold text-slate-900 leading-tight group-hover/header:text-blue-600 transition-colors">{cat.title}</h4>
+                              {cat.badge && <NavBadge text={cat.badge} />}
+                            </div>
+                            <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">{cat.description}</p>
                           </div>
-                        </div>
-                        <ul className="flex flex-col gap-1.5 mt-2">
+                        </Link>
+                        <ul className="flex flex-col gap-1 mt-1" role="menu">
                           {cat.items.map((item: NavItem) => (
-                            <li key={item.label}>
+                            <li key={item.label} role="none">
                               <Link
                                 href={item.href}
+                                role="menuitem"
                                 className={clsx(
-                                  'group block p-2 rounded-lg transition-colors',
-                                  isRouteActive(item.href) ? 'bg-blue-50/50' : 'hover:bg-slate-50'
+                                  'group block px-2 py-1.5 rounded-lg transition-all duration-150',
+                                  isRouteActive(item.href) ? 'bg-blue-50/60' : 'hover:bg-slate-50/80'
                                 )}
                               >
                                 <div className="flex items-center gap-1.5">
-                                  <span className={clsx('text-xs font-bold transition-colors', isRouteActive(item.href) ? 'text-blue-600' : 'text-slate-800 group-hover:text-blue-600')}>
+                                  <span className={clsx('text-[12px] font-semibold transition-colors', isRouteActive(item.href) ? 'text-blue-600' : 'text-slate-700 group-hover:text-blue-600')}>
                                     {item.label}
                                   </span>
-                                  {item.badge && (
-                                    <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-violet-100 text-violet-700 leading-none">
-                                      {item.badge}
-                                    </span>
-                                  )}
+                                  {item.badge && <NavBadge text={item.badge} />}
                                 </div>
                                 {item.description && (
-                                  <p className="text-[11px] text-slate-400 group-hover:text-slate-500 mt-0.5 leading-normal truncate">
+                                  <p className="text-[11px] text-slate-500 group-hover:text-slate-600 mt-0.5 leading-snug">
                                     {item.description}
                                   </p>
                                 )}
@@ -409,7 +440,7 @@ export default function Navbar() {
                 )}
               </div>
 
-              {/* Dropdown: Solutions */}
+              {/* ── Dropdown: Solutions ─────────────────────────────────────── */}
               <div
                 className="relative"
                 onMouseEnter={() => handleMouseEnter('solutions')}
@@ -417,20 +448,18 @@ export default function Navbar() {
               >
                 <button
                   className={clsx(
-                    'px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-colors focus:outline-none focus:bg-slate-100',
-                    activeTab === 'solutions' ? 'bg-slate-100 text-blue-600' : isSolutionsActive ? 'text-blue-600 font-bold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    'px-3.5 py-2 rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40',
+                    activeTab === 'solutions' ? 'bg-slate-100 text-blue-600' : isSolutionsActive ? 'text-blue-600' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50/80'
                   )}
                   aria-haspopup="true"
                   aria-expanded={activeTab === 'solutions'}
                   aria-controls="desktop-menu-solutions"
+                  onClick={() => setActiveTab(activeTab === 'solutions' ? null : 'solutions')}
                 >
                   Solutions
                   <svg
                     className={clsx('w-3.5 h-3.5 text-slate-400 transition-transform duration-200', activeTab === 'solutions' && 'rotate-180')}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
@@ -440,22 +469,23 @@ export default function Navbar() {
                   <div
                     id="desktop-menu-solutions"
                     role="menu"
-                    className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[580px] bg-white border border-slate-200/80 rounded-2xl shadow-xl shadow-slate-900/10 p-5 grid grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-1 duration-150"
+                    className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[520px] bg-white border border-slate-200/80 rounded-2xl shadow-xl shadow-slate-900/10 p-4 grid grid-cols-2 gap-2 animate-in fade-in slide-in-from-top-1 duration-150"
                   >
                     {NAVIGATION_CONFIG.solutions.map((item: NavItem) => (
                       <Link
                         key={item.label}
                         href={item.href}
+                        role="menuitem"
                         className={clsx(
                           'group flex flex-col p-3 rounded-xl transition-all duration-150',
-                          isRouteActive(item.href) ? 'bg-blue-50/50' : 'hover:bg-slate-50'
+                          isRouteActive(item.href) ? 'bg-blue-50/60' : 'hover:bg-slate-50/80'
                         )}
                       >
-                        <span className={clsx('text-xs font-bold transition-colors', isRouteActive(item.href) ? 'text-blue-600' : 'text-slate-800 group-hover:text-blue-600')}>
+                        <span className={clsx('text-[12px] font-bold transition-colors', isRouteActive(item.href) ? 'text-blue-600' : 'text-slate-800 group-hover:text-blue-600')}>
                           {item.label}
                         </span>
                         {item.description && (
-                          <p className="text-[11px] text-slate-400 group-hover:text-slate-500 mt-1 leading-relaxed">
+                          <p className="text-[11px] text-slate-500 group-hover:text-slate-600 mt-1 leading-relaxed">
                             {item.description}
                           </p>
                         )}
@@ -465,7 +495,7 @@ export default function Navbar() {
                 )}
               </div>
 
-              {/* Dropdown: Integrations */}
+              {/* ── Dropdown: Integrations ──────────────────────────────────── */}
               <div
                 className="relative"
                 onMouseEnter={() => handleMouseEnter('integrations')}
@@ -473,20 +503,18 @@ export default function Navbar() {
               >
                 <button
                   className={clsx(
-                    'px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-colors focus:outline-none focus:bg-slate-100',
-                    activeTab === 'integrations' ? 'bg-slate-100 text-blue-600' : isIntegrationsActive ? 'text-blue-600 font-bold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    'px-3.5 py-2 rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40',
+                    activeTab === 'integrations' ? 'bg-slate-100 text-blue-600' : isIntegrationsActive ? 'text-blue-600' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50/80'
                   )}
                   aria-haspopup="true"
                   aria-expanded={activeTab === 'integrations'}
                   aria-controls="desktop-menu-integrations"
+                  onClick={() => setActiveTab(activeTab === 'integrations' ? null : 'integrations')}
                 >
                   Integrations
                   <svg
                     className={clsx('w-3.5 h-3.5 text-slate-400 transition-transform duration-200', activeTab === 'integrations' && 'rotate-180')}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
@@ -496,28 +524,29 @@ export default function Navbar() {
                   <div
                     id="desktop-menu-integrations"
                     role="menu"
-                    className="absolute left-1/2 -translate-x-[400px] top-full mt-2 w-[820px] bg-white border border-slate-200/80 rounded-2xl shadow-xl shadow-slate-900/10 p-6 flex flex-col gap-5 animate-in fade-in slide-in-from-top-1 duration-150"
+                    className="absolute left-1/2 -translate-x-[320px] top-full mt-2 w-[660px] bg-white border border-slate-200/80 rounded-2xl shadow-xl shadow-slate-900/10 p-5 flex flex-col gap-4 animate-in fade-in slide-in-from-top-1 duration-150"
                   >
-                    <div className="grid grid-cols-4 gap-6">
+                    <div className="grid grid-cols-3 gap-5">
                       {NAVIGATION_CONFIG.integrations.map((cat: IntegrationsCategory) => (
-                        <div key={cat.title} className="flex flex-col gap-2.5">
-                          <h4 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest leading-none mb-1">
+                        <div key={cat.title} className="flex flex-col gap-2">
+                          <h4 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest leading-none mb-1 px-1.5">
                             {cat.title}
                           </h4>
-                          <ul className="flex flex-col gap-1.5">
+                          <ul className="flex flex-col gap-1" role="menu">
                             {cat.items.map((item: NavItem) => (
-                              <li key={item.label}>
+                              <li key={item.label} role="none">
                                 <Link
                                   href={item.href}
+                                  role="menuitem"
                                   className={clsx(
-                                    'group flex items-center gap-2 p-1.5 rounded-lg transition-colors',
-                                    isRouteActive(item.href) ? 'bg-blue-50/50' : 'hover:bg-slate-50'
+                                    'group flex items-center gap-2 px-1.5 py-1.5 rounded-lg transition-all duration-150',
+                                    isRouteActive(item.href) ? 'bg-blue-50/60' : 'hover:bg-slate-50/80'
                                   )}
                                 >
-                                  <div className="w-6 h-6 rounded-md bg-slate-50 text-slate-500 group-hover:text-blue-600 flex items-center justify-center flex-shrink-0 border border-slate-200/30">
+                                  <div className="w-6 h-6 rounded-md bg-slate-50 text-slate-500 group-hover:text-blue-600 group-hover:bg-blue-50/60 flex items-center justify-center flex-shrink-0 border border-slate-200/40 transition-colors">
                                     <NavIcon name={item.iconName || ''} className="w-3.5 h-3.5" />
                                   </div>
-                                  <span className={clsx('text-xs font-semibold transition-colors', isRouteActive(item.href) ? 'text-blue-600' : 'text-slate-700 group-hover:text-blue-600')}>
+                                  <span className={clsx('text-[12px] font-semibold transition-colors', isRouteActive(item.href) ? 'text-blue-600' : 'text-slate-700 group-hover:text-blue-600')}>
                                     {item.label}
                                   </span>
                                 </Link>
@@ -527,13 +556,13 @@ export default function Navbar() {
                         </div>
                       ))}
                     </div>
-                    <div className="border-t border-slate-100 pt-4 flex items-center justify-between">
-                      <p className="text-[11px] text-slate-400 font-medium">Looking for something else? We support 50+ integrations.</p>
+                    <div className="border-t border-slate-100 pt-3.5 flex items-center justify-between">
+                      <p className="text-[11px] text-slate-400 font-medium">We support 50+ integrations and growing.</p>
                       <Link
                         href="/integrations"
                         className="text-xs font-bold text-blue-600 hover:text-blue-700 hover:underline flex items-center gap-1 transition-all"
                       >
-                        Explore all integrations
+                        View All Integrations
                         <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                         </svg>
@@ -543,21 +572,81 @@ export default function Navbar() {
                 )}
               </div>
 
-              {/* Direct Links (API, Pricing) */}
+              {/* ── Dropdown: API ───────────────────────────────────────────── */}
+              <div
+                className="relative"
+                onMouseEnter={() => handleMouseEnter('api')}
+                onMouseLeave={handleMouseLeave}
+              >
+                <button
+                  className={clsx(
+                    'px-3.5 py-2 rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40',
+                    activeTab === 'api' ? 'bg-slate-100 text-blue-600' : isApiActive ? 'text-blue-600' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50/80'
+                  )}
+                  aria-haspopup="true"
+                  aria-expanded={activeTab === 'api'}
+                  aria-controls="desktop-menu-api"
+                  onClick={() => setActiveTab(activeTab === 'api' ? null : 'api')}
+                >
+                  API
+                  <svg
+                    className={clsx('w-3.5 h-3.5 text-slate-400 transition-transform duration-200', activeTab === 'api' && 'rotate-180')}
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {activeTab === 'api' && (
+                  <div
+                    id="desktop-menu-api"
+                    role="menu"
+                    className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[340px] bg-white border border-slate-200/80 rounded-2xl shadow-xl shadow-slate-900/10 p-4 flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-1 duration-150"
+                  >
+                    {NAVIGATION_CONFIG.apiDropdown.map((item: NavItem) => (
+                      <Link
+                        key={item.label}
+                        href={item.href}
+                        role="menuitem"
+                        className={clsx(
+                          'group flex items-start gap-3 p-2.5 rounded-xl transition-all duration-150',
+                          isRouteActive(item.href) ? 'bg-blue-50/60' : 'hover:bg-slate-50/80'
+                        )}
+                      >
+                        <div className="w-7 h-7 rounded-lg bg-slate-50 text-slate-400 group-hover:text-blue-600 group-hover:bg-blue-50/60 flex items-center justify-center border border-slate-200/40 flex-shrink-0 mt-0.5 transition-colors">
+                          <NavIcon name={item.iconName || 'code'} className="w-3.5 h-3.5" />
+                        </div>
+                        <div className="min-w-0">
+                          <span className={clsx('text-[12px] font-bold block transition-colors', isRouteActive(item.href) ? 'text-blue-600' : 'text-slate-800 group-hover:text-blue-600')}>
+                            {item.label}
+                          </span>
+                          {item.description && (
+                            <p className="text-[11px] text-slate-500 group-hover:text-slate-600 mt-0.5 leading-snug">
+                              {item.description}
+                            </p>
+                          )}
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* ── Direct Links (Pricing) ──────────────────────────────────── */}
               {NAVIGATION_CONFIG.directLinks.map((item: NavItem) => (
                 <Link
                   key={item.label}
                   href={item.href}
                   className={clsx(
-                    'px-4 py-2 rounded-lg text-sm font-semibold transition-colors',
-                    isRouteActive(item.href) ? 'text-blue-600 font-bold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    'px-3.5 py-2 rounded-lg text-sm font-semibold transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40',
+                    isRouteActive(item.href) ? 'text-blue-600' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50/80'
                   )}
                 >
                   {item.label}
                 </Link>
               ))}
 
-              {/* Dropdown: Resources */}
+              {/* ── Dropdown: Resources ─────────────────────────────────────── */}
               <div
                 className="relative"
                 onMouseEnter={() => handleMouseEnter('resources')}
@@ -565,20 +654,18 @@ export default function Navbar() {
               >
                 <button
                   className={clsx(
-                    'px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-colors focus:outline-none focus:bg-slate-100',
-                    activeTab === 'resources' ? 'bg-slate-100 text-blue-600' : isResourcesActive ? 'text-blue-600 font-bold' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    'px-3.5 py-2 rounded-lg text-sm font-semibold flex items-center gap-1.5 transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40',
+                    activeTab === 'resources' ? 'bg-slate-100 text-blue-600' : isResourcesActive ? 'text-blue-600' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50/80'
                   )}
                   aria-haspopup="true"
                   aria-expanded={activeTab === 'resources'}
                   aria-controls="desktop-menu-resources"
+                  onClick={() => setActiveTab(activeTab === 'resources' ? null : 'resources')}
                 >
                   Resources
                   <svg
                     className={clsx('w-3.5 h-3.5 text-slate-400 transition-transform duration-200', activeTab === 'resources' && 'rotate-180')}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                   </svg>
@@ -588,21 +675,22 @@ export default function Navbar() {
                   <div
                     id="desktop-menu-resources"
                     role="menu"
-                    className="absolute left-1/2 -translate-x-[360px] top-full mt-2 w-[480px] bg-white border border-slate-200/80 rounded-2xl shadow-xl shadow-slate-900/10 p-5 grid grid-cols-2 gap-3 animate-in fade-in slide-in-from-top-1 duration-150"
+                    className="absolute right-0 top-full mt-2 w-[440px] bg-white border border-slate-200/80 rounded-2xl shadow-xl shadow-slate-900/10 p-4 grid grid-cols-2 gap-2 animate-in fade-in slide-in-from-top-1 duration-150"
                   >
                     {NAVIGATION_CONFIG.resources.map((item: NavItem) => (
                       <Link
                         key={item.label}
                         href={item.href}
+                        role="menuitem"
                         className={clsx(
-                          'group flex items-center gap-3 p-2.5 rounded-xl transition-all duration-150',
-                          isRouteActive(item.href) ? 'bg-blue-50/50' : 'hover:bg-slate-50'
+                          'group flex items-center gap-2.5 p-2.5 rounded-xl transition-all duration-150',
+                          isRouteActive(item.href) ? 'bg-blue-50/60' : 'hover:bg-slate-50/80'
                         )}
                       >
-                        <div className="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 group-hover:text-blue-600 flex items-center justify-center border border-slate-200/10 flex-shrink-0">
-                          <NavIcon name={item.iconName || ''} className="w-4 h-4" />
+                        <div className="w-7 h-7 rounded-lg bg-slate-50 text-slate-400 group-hover:text-blue-600 group-hover:bg-blue-50/60 flex items-center justify-center border border-slate-200/40 flex-shrink-0 transition-colors">
+                          <NavIcon name={item.iconName || ''} className="w-3.5 h-3.5" />
                         </div>
-                        <span className={clsx('text-xs font-bold transition-colors', isRouteActive(item.href) ? 'text-blue-600' : 'text-slate-800 group-hover:text-blue-600')}>
+                        <span className={clsx('text-[12px] font-bold transition-colors', isRouteActive(item.href) ? 'text-blue-600' : 'text-slate-700 group-hover:text-blue-600')}>
                           {item.label}
                         </span>
                       </Link>
@@ -614,16 +702,16 @@ export default function Navbar() {
             </div>
 
             {/* Desktop CTAs */}
-            <div className="hidden lg:flex items-center gap-3.5 flex-shrink-0">
+            <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
               <Link
                 href={NAVIGATION_CONFIG.ctas.login.href}
-                className="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors px-3 py-2 rounded-lg"
+                className="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors px-3 py-2 rounded-lg hover:bg-slate-50/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
               >
                 {NAVIGATION_CONFIG.ctas.login.label}
               </Link>
               <Link
                 href={NAVIGATION_CONFIG.ctas.signup.href}
-                className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-500/15 transition-all duration-150 hover:shadow-blue-500/25 active:scale-[0.98]"
+                className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold text-sm rounded-xl shadow-lg shadow-blue-500/15 transition-all duration-150 hover:shadow-blue-500/25 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-2"
               >
                 {NAVIGATION_CONFIG.ctas.signup.label}
               </Link>
@@ -632,7 +720,7 @@ export default function Navbar() {
             {/* Mobile Hamburger Trigger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              className="lg:hidden p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
               aria-label="Toggle Navigation Menu"
               aria-expanded={mobileMenuOpen}
             >
@@ -651,7 +739,7 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Navigation Drawer System */}
+      {/* ── Mobile Navigation Drawer ─────────────────────────────────────────── */}
       <div className={clsx('lg:hidden fixed inset-0 z-50 transition-opacity duration-300', mobileMenuOpen ? 'pointer-events-auto' : 'pointer-events-none')}>
         {/* Dark Backdrop Overlay */}
         <div
@@ -688,17 +776,17 @@ export default function Navbar() {
             </Link>
             <button
               onClick={() => setMobileMenuOpen(false)}
-              className="p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors"
+              className="p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
               aria-label="Close Navigation Drawer"
             >
-              <svg className="w-5.5 h-5.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
 
           {/* Nav Links Body Area */}
-          <div className="flex-1 overflow-y-auto px-5 py-6 flex flex-col gap-5">
+          <div className="flex-1 overflow-y-auto px-5 py-6 flex flex-col gap-4">
             
             {/* Accordion: Services */}
             <div className="border-b border-slate-100 pb-3">
@@ -709,10 +797,7 @@ export default function Navbar() {
                 Services
                 <svg
                   className={clsx('w-4 h-4 text-slate-400 transition-transform duration-200', mobileSections.services && 'rotate-180')}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
@@ -728,6 +813,7 @@ export default function Navbar() {
                     <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
                       <NavIcon name={cat.iconName} className="w-3.5 h-3.5 text-blue-600" />
                       {cat.title}
+                      {cat.badge && <NavBadge text={cat.badge} />}
                     </div>
                     <ul className="flex flex-col gap-2 pl-5">
                       {cat.items.map((item: NavItem) => (
@@ -742,11 +828,7 @@ export default function Navbar() {
                           >
                             <span className="flex items-center gap-1.5">
                               {item.label}
-                              {item.badge && (
-                                <span className="text-[8px] font-extrabold px-1.5 py-0.5 rounded-full bg-violet-100 text-violet-700 leading-none">
-                                  {item.badge}
-                                </span>
-                              )}
+                              {item.badge && <NavBadge text={item.badge} />}
                             </span>
                           </Link>
                         </li>
@@ -766,17 +848,14 @@ export default function Navbar() {
                 Solutions
                 <svg
                   className={clsx('w-4 h-4 text-slate-400 transition-transform duration-200', mobileSections.solutions && 'rotate-180')}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
               <ul
                 className={clsx(
-                  'mt-2 flex flex-col gap-2 pl-4 overflow-hidden transition-all duration-200',
+                  'mt-2 flex flex-col gap-1 pl-4 overflow-hidden transition-all duration-200',
                   mobileSections.solutions ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'
                 )}
               >
@@ -786,11 +865,14 @@ export default function Navbar() {
                       href={item.href}
                       onClick={() => setMobileMenuOpen(false)}
                       className={clsx(
-                        'block py-2 text-sm font-semibold transition-colors',
+                        'block py-2 transition-colors',
                         isRouteActive(item.href) ? 'text-blue-600' : 'text-slate-600 hover:text-blue-600'
                       )}
                     >
-                      {item.label}
+                      <span className="text-sm font-semibold">{item.label}</span>
+                      {item.description && (
+                        <span className="block text-xs text-slate-400 mt-0.5">{item.description}</span>
+                      )}
                     </Link>
                   </li>
                 ))}
@@ -806,10 +888,7 @@ export default function Navbar() {
                 Integrations
                 <svg
                   className={clsx('w-4 h-4 text-slate-400 transition-transform duration-200', mobileSections.integrations && 'rotate-180')}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
@@ -829,10 +908,7 @@ export default function Navbar() {
                       {cat.title}
                       <svg
                         className={clsx('w-3 h-3 text-slate-400 transition-transform duration-200', mobileSubSections[cat.title] && 'rotate-180')}
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"
                       >
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                       </svg>
@@ -867,15 +943,50 @@ export default function Navbar() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="text-xs font-bold text-blue-600 hover:text-blue-700 py-2 inline-flex items-center gap-1"
                 >
-                  View all 50+ integrations
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                  </svg>
+                  View All Integrations →
                 </Link>
               </div>
             </div>
 
-            {/* Direct Links (API, Pricing) */}
+            {/* Accordion: API */}
+            <div className="border-b border-slate-100 pb-3">
+              <button
+                onClick={() => toggleMobileSection('api')}
+                className="w-full flex items-center justify-between text-left py-2 font-bold text-slate-800 hover:text-blue-600 transition-colors"
+              >
+                API
+                <svg
+                  className={clsx('w-4 h-4 text-slate-400 transition-transform duration-200', mobileSections.api && 'rotate-180')}
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <ul
+                className={clsx(
+                  'mt-2 flex flex-col gap-1 pl-4 overflow-hidden transition-all duration-200',
+                  mobileSections.api ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'
+                )}
+              >
+                {NAVIGATION_CONFIG.apiDropdown.map((item: NavItem) => (
+                  <li key={item.label}>
+                    <Link
+                      href={item.href}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={clsx(
+                        'flex items-center gap-2.5 py-2 text-sm font-semibold transition-colors',
+                        isRouteActive(item.href) ? 'text-blue-600' : 'text-slate-600 hover:text-blue-600'
+                      )}
+                    >
+                      <NavIcon name={item.iconName || 'code'} className="w-4 h-4 text-slate-400" />
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Direct Links (Pricing) */}
             {NAVIGATION_CONFIG.directLinks.map((item: NavItem) => (
               <div key={item.label} className="border-b border-slate-100 pb-3">
                 <Link
@@ -900,17 +1011,14 @@ export default function Navbar() {
                 Resources
                 <svg
                   className={clsx('w-4 h-4 text-slate-400 transition-transform duration-200', mobileSections.resources && 'rotate-180')}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
               <ul
                 className={clsx(
-                  'mt-2 flex flex-col gap-2 pl-4 overflow-hidden transition-all duration-200',
+                  'mt-2 flex flex-col gap-1 pl-4 overflow-hidden transition-all duration-200',
                   mobileSections.resources ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'
                 )}
               >
@@ -924,7 +1032,7 @@ export default function Navbar() {
                         isRouteActive(item.href) ? 'text-blue-600' : 'text-slate-600 hover:text-blue-600'
                       )}
                     >
-                      <NavIcon name={item.iconName || ''} className="w-4.5 h-4.5 text-slate-400" />
+                      <NavIcon name={item.iconName || ''} className="w-4 h-4 text-slate-400" />
                       {item.label}
                     </Link>
                   </li>
