@@ -69,9 +69,9 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
       title: 'Email Intelligence',
       iconName: 'intelligence',
       description: 'Predict bounce behavior and keep servers in peak health.',
-      href: '/features/email-intelligence',
+      href: '/email-intelligence',
       items: [
-        { label: 'Email Intelligence Hub', href: '/features/email-intelligence', description: 'Complete intelligence diagnostics dashboard' },
+        { label: 'Email Intelligence Hub', href: '/email-intelligence', description: 'Complete intelligence diagnostics dashboard' },
         { label: 'Bounce Forecaster', href: '/features/forecaster', description: 'Predict deliverability issues before sending', badge: 'New' },
         { label: 'Domain Health Score', href: '/features/domain', description: 'SPF, DKIM, DMARC validation analysis', badge: 'New' },
       ],
