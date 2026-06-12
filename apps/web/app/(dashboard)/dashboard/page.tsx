@@ -61,7 +61,7 @@ export default function DashboardPage() {
           {[
             { label: '✉️ Verify Email', href: '/verify', bg: '#2563EB', color: '#fff' },
             { label: '📋 Bulk Verify', href: '/bulk', bg: '#F1F5F9', color: '#374151' },
-            { label: '🛡️ LeadShield™', href: '/leadshield', bg: '#F1F5F9', color: '#374151' },
+            { label: '🛡️ LeadShield™', href: '/dashboard/leadshield', bg: '#F1F5F9', color: '#374151' },
             { label: '🔑 API Keys', href: '/apikeys', bg: '#F1F5F9', color: '#374151' },
           ].map(action => (
             <a key={action.label} href={action.href} style={{

@@ -58,10 +58,10 @@ export const NAVIGATION_CONFIG: NavigationConfig = {
       title: 'LeadShield™',
       iconName: 'shield',
       description: 'Protect your lead forms from spam, bots, and fake users.',
-      href: '/features/leadshield',
+      href: '/leadshield',
       badge: 'Popular',
       items: [
-        { label: 'Real-Time Form Protection', href: '/features/leadshield', description: 'Block bad signups directly at entry' },
+        { label: 'Real-Time Form Protection', href: '/leadshield', description: 'Block bad signups directly at entry' },
         { label: 'Bot & Disposable Detection', href: '/features/detection', description: 'Detect disposable emails and scripts instantly' },
       ],
     },

@@ -14,7 +14,7 @@ const nav = [
     { icon: '📁', label: 'History', href: '/history' },
   ]},
   { section: 'Protection', items: [
-    { icon: '🛡️', label: 'LeadShield™', href: '/leadshield', badge: 'Live' },
+    { icon: '🛡️', label: 'LeadShield™', href: '/dashboard/leadshield', badge: 'Live' },
     { icon: '📉', label: 'Bounce Forecaster', href: '/forecaster', badge: 'New' },
     { icon: '🏥', label: 'Domain Health', href: '/domain', badge: 'New' },
   ]},
