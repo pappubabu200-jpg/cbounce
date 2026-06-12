@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import Link from 'next/link'
 
 interface Step {
   id: string
@@ -321,6 +322,211 @@ function LeadShieldSection() {
           </motion.div>
 
         </div>
+      </div>
+    </section>
+  )
+}
+
+// ─── Complete Email Protection Ecosystem ────────────────────────────────────
+function ProtectionEcosystemSection() {
+  const containerVariants = {
+    hidden: {},
+    visible: { transition: { staggerChildren: 0.2 } }
+  }
+  
+  const cardVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+  }
+
+  const stages = [
+    {
+      id: 'leadshield',
+      title: 'LeadShield™',
+      desc: 'Block bots, disposable emails, fake signups',
+      bgClass: 'bg-emerald-500/10',
+      borderClass: 'border-emerald-500/30',
+      textClass: 'text-teal-400',
+      gradientClass: 'from-emerald-500 to-teal-500',
+      label: 'Lead Acquisition',
+    },
+    {
+      id: 'verification',
+      title: 'Email Verification',
+      desc: 'Verify and clean email addresses',
+      bgClass: 'bg-blue-500/10',
+      borderClass: 'border-blue-500/30',
+      textClass: 'text-blue-400',
+      gradientClass: 'from-blue-500 to-sky-500',
+      label: 'Database Hygiene',
+    },
+    {
+      id: 'intelligence',
+      title: 'Email Intelligence',
+      desc: 'Predict deliverability before campaigns launch',
+      bgClass: 'bg-indigo-500/10',
+      borderClass: 'border-indigo-500/30',
+      textClass: 'text-indigo-400',
+      gradientClass: 'from-indigo-500 via-violet-500 to-blue-500',
+      label: 'Campaign Ready',
+    },
+    {
+      id: 'delivery',
+      title: 'Successful Delivery',
+      desc: 'Reach real inboxes and maximize ROI',
+      bgClass: 'bg-cyan-500/10',
+      borderClass: 'border-cyan-500/30',
+      textClass: 'text-cyan-400',
+      gradientClass: 'from-emerald-400 to-cyan-500',
+      label: 'Final Outcome',
+    }
+  ]
+
+  return (
+    <section className="py-24 lg:py-32 bg-slate-900 border-y border-slate-800 relative overflow-hidden">
+      {/* Background Glows */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
+        <div className="absolute top-1/2 -translate-y-1/2 left-0 w-[500px] h-[500px] bg-emerald-500/5 blur-[120px] rounded-full" />
+        <div className="absolute top-1/2 -translate-y-1/2 right-0 w-[500px] h-[500px] bg-indigo-500/5 blur-[120px] rounded-full" />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="text-center max-w-3xl mx-auto mb-20">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight mb-5">
+            Complete Email Protection Platform
+          </h2>
+          <p className="text-slate-400 text-lg leading-relaxed">
+            CleanBounce protects your business at every stage of the customer journey.
+          </p>
+        </div>
+
+        <motion.div 
+          className="flex flex-col lg:flex-row items-center lg:items-stretch gap-4 lg:gap-6 relative"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+        >
+          {stages.map((stage, idx) => (
+            <motion.div key={stage.id} variants={cardVariants} className="flex-1 w-full relative group" aria-label={`Step ${idx + 1} of 4`}>
+              {/* Connector Line (Desktop) */}
+              {idx < stages.length - 1 && (
+                <div className="hidden lg:block absolute top-1/2 -translate-y-1/2 -right-6 w-6 border-t-2 border-dashed border-slate-700 z-0" />
+              )}
+              {/* Connector Line (Mobile) */}
+              {idx < stages.length - 1 && (
+                <div className="block lg:hidden absolute -bottom-4 left-1/2 -translate-x-1/2 h-4 border-l-2 border-dashed border-slate-700 z-0" />
+              )}
+              
+              <div className={`h-full bg-slate-950/80 backdrop-blur-sm border ${stage.borderClass} rounded-2xl p-8 relative z-10 hover:-translate-y-2 transition-transform duration-300 shadow-xl shadow-black/20`}>
+                <div className="absolute top-0 left-0 w-full h-1 rounded-t-2xl bg-gradient-to-r opacity-50 group-hover:opacity-100 transition-opacity duration-300" style={{ backgroundImage: `linear-gradient(to right, var(--tw-gradient-stops))` }} />
+                <div className={`w-full h-1 absolute top-0 left-0 rounded-t-2xl bg-gradient-to-r ${stage.gradientClass} opacity-50 group-hover:opacity-100 transition-opacity`} />
+                
+                <div className={`text-xs font-bold uppercase tracking-widest mb-6 ${stage.textClass}`}>
+                  {stage.label}
+                </div>
+                
+                <h3 className="text-xl font-bold text-white mb-3">
+                  {stage.title}
+                </h3>
+                
+                <p className="text-slate-400 text-sm leading-relaxed">
+                  {stage.desc}
+                </p>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  )
+}
+
+// ─── Who Uses CleanBounce ───────────────────────────────────────────────────
+function TargetPersonasSection() {
+  const containerVariants = {
+    hidden: {},
+    visible: { transition: { staggerChildren: 0.15 } }
+  }
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+  }
+
+  const personas = [
+    {
+      title: 'Email Marketers',
+      problem: 'High bounce rates ruining campaigns and burning IPs.',
+      solution: 'Clean lists and predict bounces before launching.',
+      link: '/solutions/email-marketers',
+    },
+    {
+      title: 'Sales Teams',
+      problem: 'Reps wasting time on fake leads and invalid domains.',
+      solution: 'Block disposable emails instantly at the entry point.',
+      link: '/solutions/sales-teams',
+    },
+    {
+      title: 'SaaS Companies',
+      problem: 'Bots spamming free trials and exhausting resources.',
+      solution: 'LeadShield™ stops automated headless browsers.',
+      link: '/solutions/saas-companies',
+    },
+    {
+      title: 'Agencies',
+      problem: 'Inheriting toxic client databases with high risk.',
+      solution: 'Bulk clean entire client lists with our high-speed API.',
+      link: '/solutions/agencies',
+    }
+  ]
+
+  return (
+    <section className="py-24 bg-white border-b border-slate-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+            Who Uses CleanBounce
+          </h2>
+        </div>
+
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
+          {personas.map(p => (
+            <motion.div key={p.title} variants={cardVariants}>
+              <Link href={p.link} className="block h-full group bg-slate-50 border border-slate-200 rounded-2xl p-6 hover:shadow-lg hover:border-blue-200 transition-all duration-300">
+                <h3 className="text-xl font-bold text-slate-900 mb-6 group-hover:text-blue-600 transition-colors">{p.title}</h3>
+                
+                <div className="mb-4">
+                  <div className="text-[10px] font-bold text-red-500 uppercase tracking-wider mb-1">The Problem</div>
+                  <p className="text-sm text-slate-600 leading-relaxed">{p.problem}</p>
+                </div>
+                
+                <div className="py-2 flex justify-center">
+                  <svg className="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                  </svg>
+                </div>
+
+                <div className="mt-2 mb-5">
+                  <div className="text-[10px] font-bold text-emerald-500 uppercase tracking-wider mb-1">CleanBounce Solution</div>
+                  <p className="text-sm text-slate-800 font-medium leading-relaxed">{p.solution}</p>
+                </div>
+
+                <div className="pt-4 border-t border-slate-200 mt-auto flex items-center justify-between">
+                  <span className="text-xs font-bold text-blue-600 group-hover:text-blue-700 transition-colors">Learn More</span>
+                  <svg className="w-4 h-4 text-blue-600 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
     </section>
   )
@@ -670,6 +876,10 @@ export default function HomePage() {
 
         {/* ── LEADSHIELD™ SHOWCASE ──────────────────────────────────────────── */}
         <LeadShieldSection />
+
+        {/* ── ECOSYSTEM & PERSONAS ──────────────────────────────────────────── */}
+        <ProtectionEcosystemSection />
+        <TargetPersonasSection />
 
       </main>
     </div>
