@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import history, leadshield
+from routers import history, leadshield, bulk
 
 app = FastAPI(title="cbounce.io API", version="2.1.0")
 
@@ -14,6 +14,7 @@ app.add_middleware(
 
 app.include_router(history.router, prefix="/v1/history", tags=["History"])
 app.include_router(leadshield.router, prefix="/v1/leadshield", tags=["LeadShield"])
+app.include_router(bulk.router, prefix="/v1/bulk", tags=["Bulk Verification"])
 
 @app.get("/health")
 async def health():
