@@ -19,6 +19,13 @@ app.include_router(leadshield.router, prefix="/v1/leadshield", tags=["LeadShield
 async def health():
     return {"status": "ok", "service": "cbounce-api", "version": "2.1.0"}
 
+@app.get("/")
+async def root():
+    return {
+        "name": "CleanBounce API",
+        "status": "healthy",
+        "docs": "/docs"
+    }
 @app.post("/v1/verify/single/free")
 async def verify_free(req: dict):
     from core.engine import check_email
