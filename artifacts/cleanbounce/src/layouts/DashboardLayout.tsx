@@ -9,9 +9,9 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
-    <SidebarProvider defaultOpen={true}>
+    <SidebarProvider defaultOpen={true} className="h-svh overflow-hidden">
       <AppSidebar />
-      <SidebarInset className="flex flex-col min-h-screen overflow-hidden">
+      <SidebarInset className="flex flex-col">
         <AppHeader />
         <main className="flex-1 overflow-y-auto bg-background p-6 md:p-8">
           {children}

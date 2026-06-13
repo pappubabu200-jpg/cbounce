@@ -103,22 +103,25 @@
   --elevate-1: rgba(0,0,0, .03);
   --elevate-2: rgba(0,0,0, .08);
 
+  /* Page background — very light gray, like Stripe's content area */
   --background: 210 40% 98%;
   --foreground: 222 47% 11%;
   --border: 214 32% 91%;
 
+  /* Cards — pure white, lifts above the light-gray page bg */
   --card: 0 0% 100%;
   --card-foreground: 222 47% 11%;
   --card-border: 214 32% 91%;
 
-  --sidebar: 222 47% 11%;
-  --sidebar-foreground: 210 40% 97%;
-  --sidebar-border: 215 28% 17%;
-  --sidebar-primary: 219 89% 52%;
-  --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 215 28% 17%;
-  --sidebar-accent-foreground: 214 32% 91%;
-  --sidebar-ring: 219 89% 52%;
+  /* Sidebar — white, premium light SaaS style (Stripe / Vercel / Linear) */
+  --sidebar: 0 0% 100%;
+  --sidebar-foreground: 215 16% 47%;         /* slate-500 — inactive items */
+  --sidebar-border: 214 32% 91%;             /* slate-200 — right edge divider */
+  --sidebar-primary: 213 100% 97%;           /* blue-50 — active pill background */
+  --sidebar-primary-foreground: 221 83% 53%; /* blue-700 — active item text + icon */
+  --sidebar-accent: 210 40% 97%;             /* slate-50 — hover background */
+  --sidebar-accent-foreground: 215 25% 27%;  /* slate-700 — hover item text */
+  --sidebar-ring: 219 89% 52%;               /* blue-600 — focus ring */
 
   --popover: 0 0% 100%;
   --popover-foreground: 222 47% 11%;
@@ -204,7 +207,7 @@
   --card-border: 215 25% 27%;
 
   --sidebar: 222 84% 5%;
-  --sidebar-foreground: 210 40% 97%;
+  --sidebar-foreground: 215 20% 65%;
   --sidebar-border: 222 47% 11%;
   --sidebar-primary: 217 91% 60%;
   --sidebar-primary-foreground: 0 0% 100%;
@@ -260,9 +263,6 @@
   }
 }
 
-/**
- * Elevation system utilities
- */
 @layer utilities {
 
   input[type="search"]::-webkit-search-cancel-button {
